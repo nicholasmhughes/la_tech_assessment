@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  tasks:
+    - name: awesomeapp index dir
+      file:
+        state: directory
+        path: /tmp/nginx
+
+    - name: awesomeapp index
+      template:
+        src: ./templates/index.j2
+        dest: /tmp/nginx/index.html
+    
+    - name: run awesomeapp
+      docker_container:
+        name: awesomeapp
+        image: nginx
+        detach: yes
+        ports:
+            - 8080:80
+            - 8443:443
+        volumes:
+            - /tmp/nginx:/usr/share/nginx/html:ro
